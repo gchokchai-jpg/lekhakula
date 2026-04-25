@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ทำเนียบทายาทขุนด่านจ๊าบ ตระกูลเลขะกุล</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold:#c9a84c; --gold-light:#e8d5a3; --gold-dark:#8b6914;
+    --brown:#3d2b1f; --brown-light:#6b4c3b;
+    --cream:#fdf6e3; --cream-dark:#f5e6c8;
+    --text:#2c1a0e; --text-muted:#7a5c44;
+    --shadow:rgba(61,43,31,0.18);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Sarabun',sans-serif;background:var(--cream);color:var(--text);min-height:100vh}
+
+  header{background:linear-gradient(135deg,var(--brown) 0%,#5a3825 60%,var(--gold-dark) 100%);text-align:center;padding:32px 20px 24px;position:relative;overflow:hidden}
+  header::before{content:'';position:absolute;inset:0;pointer-events:none;background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23c9a84c' fill-opacity='0.08'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/svg%3E")}
+  .ornament{font-size:24px;letter-spacing:8px;color:var(--gold);opacity:.7;margin-bottom:6px}
+  header h1{font-family:'Playfair Display',serif;font-size:clamp(20px,5vw,30px);font-weight:700;color:var(--gold-light);line-height:1.3;margin-bottom:4px}
+  header p{font-size:14px;color:var(--gold-light);opacity:.75;letter-spacing:1px}
+
+  .search-wrap{background:var(--brown);padding:16px 20px 12px;position:sticky;top:0;z-index:100;box-shadow:0 4px 16px var(--shadow)}
+  .search-inner{max-width:680px;margin:0 auto;display:flex;gap:10px;align-items:center}
+  .search-box{flex:1;padding:12px 18px;border:2px solid var(--gold-dark);border-radius:30px;background:rgba(255,255,255,.08);color:var(--cream);font-family:'Sarabun',sans-serif;font-size:16px;outline:none;transition:all .2s}
+  .search-box::placeholder{color:rgba(232,213,163,.4)}
+  .search-box:focus{border-color:var(--gold);background:rgba(255,255,255,.13)}
+  .search-btn{padding:12px 22px;background:var(--gold);color:var(--brown);border:none;border-radius:30px;font-family:'Sarabun',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s;white-space:nowrap}
+  .search-btn:hover{background:var(--gold-light)}
+
+  .filter-wrap{max-width:680px;margin:10px auto 0;display:flex;gap:8px;flex-wrap:wrap}
+  .chip{padding:4px 14px;border-radius:20px;border:1px solid var(--gold-dark);background:transparent;color:var(--gold-light);font-family:'Sarabun',sans-serif;font-size:13px;cursor:pointer;transition:all .2s}
+  .chip.active,.chip:hover{background:var(--gold);color:var(--brown);border-color:var(--gold)}
+
+  main{max-width:720px;margin:0 auto;padding:20px 16px 60px}
+  .status-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;font-size:14px;color:var(--text-muted);min-height:24px}
+  .status-bar .count{font-weight:600;color:var(--brown)}
+
+  .center-msg{text-align:center;padding:60px 20px;color:var(--text-muted)}
+  .spinner{width:44px;height:44px;border:4px solid var(--cream-dark);border-top-color:var(--gold);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+
+  .list-wrap{display:flex;flex-direction:column;gap:10px}
+  .person-row{background:#fff;border-radius:14px;border:1px solid var(--cream-dark);display:flex;align-items:center;gap:14px;padding:12px 14px;cursor:pointer;transition:box-shadow .2s,transform .15s,border-color .2s;box-shadow:0 2px 8px rgba(0,0,0,.05);animation:fadeUp .3s ease both}
+  .person-row:hover{box-shadow:0 6px 20px var(--shadow);transform:translateY(-2px);border-color:var(--gold-light)}
+  @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+  .person-avatar{width:60px;height:60px;border-radius:50%;object-fit:cover;border:2.5px solid var(--gold-light);flex-shrink:0;background:var(--cream-dark)}
+  .avatar-ph{width:60px;height:60px;border-radius:50%;background:linear-gradient(135deg,var(--cream-dark),var(--gold-light));display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;border:2.5px solid var(--gold-light)}
+  .person-info{flex:1;min-width:0}
+  .person-name{font-size:16px;font-weight:600;color:var(--brown);margin-bottom:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .person-rel{font-size:13px;color:var(--text-muted);margin-bottom:2px}
+  .person-gen{font-size:12px;color:var(--gold-dark);font-weight:500}
+  .person-id{font-size:13px;font-weight:700;color:var(--gold-dark);background:var(--cream-dark);border-radius:8px;padding:4px 10px;flex-shrink:0}
+  .arr{color:var(--gold);font-size:18px;flex-shrink:0}
+
+  .load-more{display:block;margin:24px auto 0;padding:12px 32px;background:transparent;border:2px solid var(--gold);color:var(--gold-dark);border-radius:30px;font-family:'Sarabun',sans-serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .2s}
+  .load-more:hover{background:var(--gold);color:var(--brown)}
+
+  .overlay{display:none;position:fixed;inset:0;background:rgba(30,15,5,.65);z-index:200;overflow-y:auto;backdrop-filter:blur(4px)}
+  .overlay.open{display:flex;align-items:flex-start;justify-content:center;padding:20px 12px 40px}
+  .mcard{background:var(--cream);border-radius:20px;max-width:560px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden;animation:slideUp .3s ease;position:relative}
+  @keyframes slideUp{from{transform:translateY(30px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .mcls{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.4);color:#fff;border:none;border-radius:50%;width:36px;height:36px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;z-index:10;transition:background .2s}
+  .mcls:hover{background:rgba(0,0,0,.65)}
+  .mphoto-wrap{width:100%;height:320px;background:linear-gradient(135deg,var(--brown),var(--brown-light));display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative}
+  .mphoto{width:100%;height:100%;object-fit:contain;background:#1a0f08}
+  .mphoto-ph{font-size:80px;opacity:.35}
+  .mphoto-fade{position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(transparent,var(--cream))}
+  /* ปุ่มดูภาพเต็ม */
+  .photo-full-btn{position:absolute;bottom:12px;right:12px;background:rgba(0,0,0,0.55);color:#fff;border:none;border-radius:20px;padding:6px 14px;font-family:'Sarabun',sans-serif;font-size:12px;cursor:pointer;text-decoration:none;display:flex;align-items:center;gap:5px;transition:background .2s;z-index:5}
+  .photo-full-btn:hover{background:rgba(0,0,0,0.8)}
+  .mbody{padding:20px 24px 28px}
+  .mtitle-row{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;gap:12px}
+  .mname{font-size:22px;font-weight:700;color:var(--brown);line-height:1.3;flex:1}
+  .mid-badge{background:var(--gold);color:var(--brown);font-weight:700;font-size:14px;border-radius:10px;padding:4px 12px;flex-shrink:0;margin-top:4px}
+  .mrel{font-size:15px;color:var(--text-muted);margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--cream-dark)}
+  .mfields{display:flex;flex-direction:column;gap:10px}
+  .frow{display:grid;grid-template-columns:145px 1fr;gap:8px;font-size:14px;line-height:1.5}
+  .flabel{color:var(--text-muted);font-weight:500;padding-top:1px}
+  .fval{color:var(--text);word-break:break-word}
+  .fval a{color:var(--gold-dark);text-decoration:underline}
+  .msec{font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold-dark);margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--gold-light)}
+  /* tree links */
+  .tree-link{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;background:var(--brown);color:var(--gold-light);border-radius:20px;font-size:13px;text-decoration:none;margin:4px 4px 0 0;transition:background .2s}
+  .tree-link:hover{background:var(--gold-dark);color:#fff}
+  .tree-links-wrap{display:flex;flex-wrap:wrap;margin-top:2px}
+
+  /* request form buttons */
+  .form-btn{display:inline-flex;align-items:center;gap:8px;margin-top:10px;padding:11px 22px;border:none;border-radius:30px;font-family:'Sarabun',sans-serif;font-size:15px;font-weight:600;cursor:pointer;text-decoration:none;transition:background .2s;width:100%;justify-content:center}
+  .form-btn-edit{background:var(--gold);color:var(--brown)}
+  .form-btn-edit:hover{background:var(--gold-light)}
+  .form-btn-new{background:var(--brown);color:var(--gold-light)}
+  .form-btn-new:hover{background:var(--brown-light)}
+  .form-btn-file{background:#4a7c59;color:#fff}
+  .form-btn-file:hover{background:#3a6347}
+
+  /* footer note */
+  footer{text-align:center;padding:18px 16px 28px;font-size:12px;color:var(--text-muted);border-top:1px solid var(--cream-dark);margin-top:8px}
+
+  /* ── Tab Navigation ── */
+  .tab-nav{background:var(--brown);display:flex;justify-content:center;gap:4px;padding:0 20px 0;border-top:1px solid rgba(201,168,76,0.2)}
+  .tab-btn{padding:10px 24px;background:transparent;color:var(--gold-light);border:none;border-bottom:3px solid transparent;font-family:'Sarabun',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;opacity:.65}
+  .tab-btn.active{border-bottom-color:var(--gold);color:var(--gold);opacity:1}
+  .tab-btn:hover{opacity:1;color:var(--gold-light)}
+
+  /* ── Mind Map / Tree ── */
+  #treeView{display:none;padding:16px 0 60px}
+  #treeView.active{display:block}
+  #searchView{display:block}
+  #searchView.hidden{display:none}
+
+  .tree-hint{text-align:center;font-size:13px;color:var(--text-muted);margin-bottom:16px;padding:0 16px}
+
+  /* SVG canvas */
+  #treeCanvas{width:100%;overflow:hidden;cursor:grab;background:var(--cream);border-radius:16px;border:1px solid var(--cream-dark);box-shadow:0 2px 12px var(--shadow)}
+  #treeCanvas:active{cursor:grabbing}
+  #treeCanvas svg{display:block}
+
+  /* zoom controls */
+  .zoom-ctrl{display:flex;gap:8px;justify-content:center;margin-bottom:12px}
+  .zoom-btn{padding:6px 16px;background:var(--brown);color:var(--gold-light);border:none;border-radius:20px;font-size:16px;cursor:pointer;font-family:'Sarabun',sans-serif;transition:background .2s}
+  .zoom-btn:hover{background:var(--brown-light)}
+  .zoom-label{padding:6px 12px;font-size:13px;color:var(--text-muted);align-self:center}
+
+  @media(max-width:480px){.frow{grid-template-columns:115px 1fr}.mname{font-size:19px}.tab-btn{padding:10px 14px;font-size:13px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="ornament">✦ ✦ ✦</div>
+  <h1>ทำเนียบทายาทขุนด่านจ๊าบ</h1>
+  <p>ต้นตระกูลเลขะกุล</p>
+</header>
+
+<div class="search-wrap">
+  <div class="search-inner">
+    <input class="search-box" id="searchInput" type="text"
+      placeholder="ค้นหา ชื่อ / ชื่อเล่น / รหัสประจำตัว / จังหวัด ..." autocomplete="off">
+    <button class="search-btn" onclick="doSearch()">🔍 ค้นหา</button>
+  </div>
+  <div class="filter-wrap" id="filterWrap">
+    <button class="chip active" data-gen="">ทั้งหมด</button>
+    <button class="chip" data-gen="0">Gen 0</button>
+    <button class="chip" data-gen="1">Gen 1 (ลูก)</button>
+    <button class="chip" data-gen="2">Gen 2 (หลาน)</button>
+    <button class="chip" data-gen="3">Gen 3 (เหลน)</button>
+    <button class="chip" data-gen="4">Gen 4 (โหลน)</button>
+    <button class="chip" data-gen="5+">Gen 5+</button>
+  </div>
+</div>
+
+<!-- Tab Navigation -->
+<div class="tab-nav">
+  <button class="tab-btn active" id="tabSearch" onclick="switchTab('search')">🔍 ค้นหา</button>
+  <button class="tab-btn" id="tabTree" onclick="switchTab('tree')">🌳 ต้นไม้ตระกูล</button>
+</div>
+
+<!-- Search View -->
+<div id="searchView">
+<main>
+  <div class="status-bar"><span id="statusText">กำลังโหลดข้อมูล...</span></div>
+  <div id="content">
+    <div class="center-msg"><div class="spinner"></div><p>กำลังดึงข้อมูลจาก Google Sheets...</p></div>
+  </div>
+</main>
+
+</div><!-- end searchView -->
+
+<!-- Tree View -->
+<div id="treeView">
+  <div style="max-width:960px;margin:0 auto;padding:16px 16px 60px">
+
+    <!-- Branch search bar -->
+    <div style="background:var(--cream-dark);border-radius:14px;padding:16px 18px;margin-bottom:14px;border:1px solid var(--gold-light)">
+      <div style="font-size:13px;color:var(--text-muted);margin-bottom:8px">
+        🌿 พิมพ์รหัสสายที่ต้องการดู เช่น <b>B</b> · <b>B2</b> · <b>B2.2</b> · <b>F8</b>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input id="branchInput" type="text" placeholder="พิมพ์รหัส เช่น B2 หรือ F8 ..."
+          style="flex:1;padding:10px 16px;border:2px solid var(--gold-dark);border-radius:24px;font-family:'Sarabun',sans-serif;font-size:15px;background:#fff;color:var(--text);outline:none">
+        <button onclick="doTreeSearch()"
+          style="padding:10px 20px;background:var(--gold);color:var(--brown);border:none;border-radius:24px;font-family:'Sarabun',sans-serif;font-size:15px;font-weight:600;cursor:pointer;white-space:nowrap">
+          🌳 ดูสาย
+        </button>
+      </div>
+      <!-- Quick branch chips -->
+      <div id="branchChips" style="margin-top:10px;display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
+
+    <!-- Info bar -->
+    <div id="treeInfo" style="font-size:13px;color:var(--text-muted);margin-bottom:10px;min-height:20px"></div>
+
+    <!-- Zoom controls -->
+    <div class="zoom-ctrl">
+      <button class="zoom-btn" onclick="treeZoom(1.25)">＋</button>
+      <span class="zoom-label" id="zoomLabel">100%</span>
+      <button class="zoom-btn" onclick="treeZoom(0.8)">－</button>
+      <button class="zoom-btn" onclick="treeReset()">↺ Reset</button>
+    </div>
+
+    <!-- SVG canvas -->
+    <div id="treeCanvas" style="overflow:auto;border-radius:16px;border:1px solid var(--cream-dark);background:#fff;box-shadow:0 2px 12px var(--shadow);min-height:200px">
+      <div style="text-align:center;padding:60px 20px;color:var(--text-muted)">
+        <p style="font-size:36px">🌳</p>
+        <p style="margin-top:12px">พิมพ์รหัสสายด้านบนเพื่อแสดงต้นไม้ตระกูลครับ</p>
+      </div>
+    </div>
+
+    <p style="font-size:12px;color:var(--text-muted);margin-top:10px;text-align:center">
+      💡 กดที่กล่องชื่อ = ดูรายละเอียด &nbsp;|&nbsp; Scroll ภายในกรอบ = เลื่อนซ้าย/ขวา
+    </p>
+  </div>
+</div>
+
+<footer>
+  หมายเหตุ: ข้อมูลเพื่อการศึกษาเชิงประวัติและสายตระกูลเท่านั้น
+</footer>
+
+<div class="overlay" id="overlay" onclick="closeIfBg(event)">
+  <div class="mcard">
+    <button class="mcls" onclick="closeModal()">✕</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+//  CONFIG — แก้ตรงนี้เมื่อ deploy ใหม่
+// ══════════════════════════════════════════
+const API_URL = 'https://script.google.com/macros/s/AKfycbwg_umxiNSCTEPCEaLOjBxu9byjurtc4I6Y8MXLXanc18cJsIB-ZxO6ckDwjrYO7_Tz/exec';
+const PAGE_SIZE = 30;
+
+// ══════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════
+let allData  = [];   // array of objects {header: value}
+let filtered = [];
+let displayed = 0;
+let activeGen = '';
+let H = {};          // column index map  {col_name: index}
+
+// ══════════════════════════════════════════
+//  FETCH via Apps Script (ไม่มี CORS)
+// ══════════════════════════════════════════
+async function fetchData() {
+  try {
+    const res  = await fetch(API_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+    const raw  = await res.json();   // [[header...], [row1...], [row2...], ...]
+
+    if (!Array.isArray(raw) || raw.length < 2)
+      throw new Error('ข้อมูลที่ได้รับไม่ถูกต้อง (ไม่ใช่ Array 2D)');
+
+    const headers = raw[0].map(h => String(h).trim());
+
+    // สร้าง index map จาก header จริง
+    headers.forEach((h, i) => { H[h] = i; });
+
+    console.log('Headers:', headers);
+    console.log('Total rows:', raw.length - 1);
+
+    // แปลงเป็น array of objects
+    allData = raw.slice(1).map(row =>
+      Object.fromEntries(headers.map((h, i) => [h, String(row[i] ?? '').trim()]))
+    );
+
+    doSearch();
+  } catch(e) {
+    console.error(e);
+    document.getElementById('content').innerHTML =
+      `<div class="center-msg">
+        <p style="font-size:36px">⚠️</p>
+        <p style="margin-top:12px;font-weight:600">โหลดข้อมูลไม่สำเร็จ</p>
+        <p style="margin-top:8px;font-size:13px;color:#999">${esc(e.message)}</p>
+        <p style="margin-top:6px;font-size:12px;color:#bbb">กรุณากด F12 → Console เพื่อดูรายละเอียด</p>
+      </div>`;
+    document.getElementById('statusText').textContent = 'เกิดข้อผิดพลาด';
+  }
+}
+
+// ══════════════════════════════════════════
+//  HELPER: ดึงค่าจาก row โดยใช้ชื่อ header
+//  รองรับ partial match และหลาย keyword
+// ══════════════════════════════════════════
+function g(obj, ...keys) {
+  for (const k of keys) {
+    const kl = k.toLowerCase();
+    // exact
+    for (const h in obj) {
+      if (h.toLowerCase() === kl) return obj[h] || '';
+    }
+    // partial
+    for (const h in obj) {
+      if (h.toLowerCase().includes(kl)) return obj[h] || '';
+    }
+  }
+  return '';
+}
+
+// ══════════════════════════════════════════
+//  SEARCH & FILTER
+// ══════════════════════════════════════════
+function doSearch() {
+  const q = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  filtered = allData.filter(row => {
+    // Generation filter
+    if (activeGen !== '') {
+      const gen = g(row, 'generation').replace(/\.0$/, '').trim();
+      if (activeGen === '5+') {
+        const n = parseFloat(gen);
+        if (isNaN(n) || n < 5) return false;
+      } else {
+        if (gen !== activeGen) return false;
+      }
+    }
+    // Text search — ค้นหาทุก field
+    if (q) {
+      const hay = Object.values(row).join(' ').toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  displayed = 0;
+  renderList(true);
+}
+
+// ══════════════════════════════════════════
+//  RENDER LIST
+// ══════════════════════════════════════════
+function renderList(reset) {
+  const el = document.getElementById('content');
+  const st = document.getElementById('statusText');
+
+  if (filtered.length === 0) {
+    el.innerHTML = `<div class="center-msg"><p style="font-size:36px">🔍</p><p style="margin-top:12px">ไม่พบข้อมูลที่ค้นหา</p></div>`;
+    st.innerHTML = 'ไม่พบผลลัพธ์';
+    return;
+  }
+
+  const chunk = filtered.slice(displayed, displayed + PAGE_SIZE);
+  displayed += chunk.length;
+
+  const html = chunk.map((row, i) => {
+    const photo    = extractPhotoUrl(g(row, 'รูปภาพ'));
+    const prefix   = g(row, 'คำนำหน้าชื่อ');
+    const name     = g(row, 'ชื่อทายาท');
+    const fullName = [prefix, name].filter(Boolean).join(' ') || '(ไม่มีชื่อ)';
+    const relation = g(row, 'ความสัมพันธ์กับขุนด่านจ๊าบ', 'ความสัมพันธ์');
+    const gen      = g(row, 'generation').replace(/\.0$/, '');
+    const genLabel = gen !== '' ? `Gen ${gen}` : '';
+    const id       = g(row, 'รหัสประจำตัว');
+    const idx      = allData.indexOf(row);
+
+    return `<div class="person-row" onclick="openModal(${idx})" style="animation-delay:${Math.min(i,12)*0.04}s">
+      ${photo
+        ? `<img class="person-avatar" src="${photo}" loading="lazy" alt=""
+             onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+        : ''}
+      <div class="avatar-ph" style="${photo ? 'display:none' : ''}">👤</div>
+      <div class="person-info">
+        <div class="person-name">${esc(fullName)}</div>
+        <div class="person-rel">${esc(relation)}</div>
+        ${genLabel ? `<div class="person-gen">${esc(genLabel)}</div>` : ''}
+      </div>
+      <span class="person-id">${esc(id)}</span>
+      <span class="arr">›</span>
+    </div>`;
+  }).join('');
+
+  document.getElementById('loadMoreBtn')?.remove();
+
+  if (reset) el.innerHTML = `<div class="list-wrap">${html}</div>`;
+  else el.querySelector('.list-wrap').insertAdjacentHTML('beforeend', html);
+
+  if (displayed < filtered.length) {
+    const btn = document.createElement('button');
+    btn.id = 'loadMoreBtn'; btn.className = 'load-more';
+    btn.textContent = `โหลดเพิ่ม (เหลืออีก ${filtered.length - displayed} คน)`;
+    btn.onclick = () => renderList(false);
+    el.appendChild(btn);
+  }
+
+  st.innerHTML = `พบ <span class="count">${filtered.length.toLocaleString()}</span> คน จากทั้งหมด ${allData.length.toLocaleString()} คน`;
+}
+
+// ══════════════════════════════════════════
+//  MODAL
+// ══════════════════════════════════════════
+function openModal(idx) {
+  const row = allData[idx];
+  if (!row) return;
+
+  const photo     = extractPhotoUrl(g(row, 'รูปภาพ'));
+  const photoFull = extractFullPhotoUrl(g(row, 'รูปภาพ'));
+  const prefix   = g(row, 'คำนำหน้าชื่อ');
+  const name     = g(row, 'ชื่อทายาท');
+  const fullName = [prefix, name].filter(Boolean).join(' ') || '(ไม่มีชื่อ)';
+  const id       = g(row, 'รหัสประจำตัว');
+  const relation = g(row, 'ความสัมพันธ์กับขุนด่านจ๊าบ', 'ความสัมพันธ์');
+  const gen      = g(row, 'generation').replace(/\.0$/, '');
+
+  const f = (label, ...keys) => {
+    const val = g(row, ...keys);
+    if (!val) return '';
+    return `<div class="frow"><span class="flabel">${label}</span><span class="fval">${esc(val)}</span></div>`;
+  };
+  const flink = (label, val, scheme) => {
+    if (!val) return '';
+    return `<div class="frow"><span class="flabel">${label}</span><span class="fval"><a href="${scheme}:${esc(val)}">${esc(val)}</a></span></div>`;
+  };
+  const sec = t => `<div class="msec">${t}</div>`;
+
+  const p1 = [
+    f('ชื่อเล่น',     'ชื่อเล่น'),
+    f('นามสกุลเดิม',  'นามสกุลเดิม'),
+    f('วันเกิด',      'วันเกิด'),
+    f('สถานะชีวิต',   'สถานะชีวิต'),
+    f('จำนวนบุตร',    'จำนวนบุตร'),
+  ].join('');
+
+  const p2 = [
+    f('บิดา',            'ชื่อบิดา'),
+    f('มารดา',           'ชื่อมารดา'),
+    f('คู่สมรส',         'ชื่อคู่สมรส'),
+    gen !== '' ? `<div class="frow"><span class="flabel">Generation</span><span class="fval">${esc(gen)}</span></div>` : '',
+    f('พ่อแม่',  'ลำดับบรรพบุรุษ'),
+    f('1 ลูก',  '1ลูก'),
+    f('2 หลาน',  '2หลาน'),
+    f('3 เหลน',  '3เหลน'),
+    f('4 โหลน',  '4โหลน'),
+   f('5 เหลา',  '5เหลา'),
+   f('6 กอ',  '6กอ'),
+   f('7 กิ่ง',  '7กิ่ง'),
+   f('8 แขนง',  '8แขนง'),
+  ].join('');
+
+  // const tel   = g(row, 'โทรศัพฑ์', 'โทรศัพท์');
+  const email = g(row, 'email');
+  const line  = g(row, 'idline', 'id line', 'line');
+  const p3 = [
+    // flink('โทรศัพท์', tel,   'tel'),
+    flink('Email',    email, 'mailto'),
+    line  ? f('ID Line', 'idline','id line','line') : '',
+    f('จังหวัด',  'จังหวัด'),
+    f('ประเทศ',   'ประเทศ'),
+    // f('ที่อยู่',   'ที่อยู่'),
+  ].join('');
+
+  // ── ภาพต้นไม้แห่งตระกูล (เป็น link คลิกได้)
+  const treeLinks = ['ภาพต้นไม้แห่งตระกูล1','ภาพต้นไม้แห่งตระกูล2','ภาพต้นไม้แห่งตระกูล3']
+    .map((k, i) => {
+      const url = g(row, k);
+      if (!url) return '';
+      const href = extractLinkUrl(url);
+      if (!href) return '';
+      return `<a class="tree-link" href="${esc(href)}" target="_blank" rel="noopener">🌳 ต้นไม้ตระกูล ${i+1}</a>`;
+    }).join('');
+  const treeSection = treeLinks
+    ? sec('ต้นไม้แห่งตระกูล') + `<div class="tree-links-wrap">${treeLinks}</div>`
+    : '';
+
+  const p4 = [
+    f('วุฒิการศึกษา', 'วุฒิการศึกษา'),
+    f('อาชีพ',        'อาชีพ'),
+    f('ข้อความพอสังเขป', 'ข้อความพอสังเขป'),
+  ].join('');
+
+  // ── Form links
+  const FORM_EDIT_URL = 'https://forms.gle/J36Q6fb6WB2xdVqJA';  // ขอแก้ไขข้อมูล
+  const FORM_NEW_URL  = 'https://forms.gle/aFPKvcSFBujQHytB6';   // ขอเพิ่มสมาชิกใหม่
+
+  // ── แฟ้มประวัติ (แสดงเฉพาะคนที่มี link)
+  const fileRaw = g(row, 'แฟ้มประวัติและข้อมูลอื่นๆ', 'แฟ้มประวัติ');
+  const fileHref = extractLinkUrl(fileRaw);
+  const fileBtn = fileHref
+    ? `<a class="form-btn form-btn-file" href="${esc(fileHref)}" target="_blank" rel="noopener">
+        📄 ดูแฟ้มประวัติและข้อมูลเพิ่มเติม
+      </a>`
+    : '';
+
+  const formBtn = `
+    ${fileBtn}
+    <a class="form-btn form-btn-edit" href="${FORM_EDIT_URL}" target="_blank" rel="noopener">
+      ✏️ ขอแก้ไข / เพิ่มเติมข้อมูล
+    </a>
+    <a class="form-btn form-btn-new" href="${FORM_NEW_URL}" target="_blank" rel="noopener">
+      ➕ ขอเพิ่มสมาชิกใหม่
+    </a>`;
+
+  document.getElementById('modalContent').innerHTML = `
+    <div class="mphoto-wrap">
+      ${photo
+        ? `<img class="mphoto" src="${photo}" alt="photo"
+             onerror="this.outerHTML='<div class=mphoto-ph>👤</div>'">`
+        : '<div class="mphoto-ph">👤</div>'}
+      <div class="mphoto-fade"></div>
+      ${photoFull
+        ? `<a class="photo-full-btn" href="${esc(photoFull)}" target="_blank" rel="noopener">
+             🔍 ดูภาพเต็ม
+           </a>`
+        : ''}
+    </div>
+    <div class="mbody">
+      <div class="mtitle-row">
+        <div class="mname">${esc(fullName)}</div>
+        <div class="mid-badge">${esc(id)}</div>
+      </div>
+      <div class="mrel">${esc(relation)}</div>
+      <div class="mfields">
+        ${p1}
+        ${p2 ? sec('ข้อมูลครอบครัว & ลำดับบรรพบุรุษ') + p2 : ''}
+        ${p3 ? sec('ติดต่อ') + p3 : ''}
+        ${p4 ? sec('ข้อมูลเพิ่มเติม') + p4 : ''}
+        ${treeSection}
+        ${formBtn}
+      </div>
+    </div>`;
+
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeIfBg(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+// ══════════════════════════════════════════
+//  PHOTO URL
+// ══════════════════════════════════════════
+function getFileId(raw) {
+  if (!raw) return null;
+  raw = raw.trim();
+  let m;
+  m = raw.match(/[?&]id=([a-zA-Z0-9_-]+)/);  if (m) return m[1];
+  m = raw.match(/\/d\/([a-zA-Z0-9_-]+)/);     if (m) return m[1];
+  return null;
+}
+
+// thumbnail สำหรับแสดงใน card (w400 = คมชัดขึ้น)
+function extractPhotoUrl(raw) {
+  if (!raw) return null;
+  raw = raw.trim();
+  const fid = getFileId(raw);
+  if (fid) return `https://drive.google.com/thumbnail?id=${fid}&sz=w400`;
+  if (raw.startsWith('http')) return raw;
+  return null;
+}
+
+// URL เต็มสำหรับเปิดใน Google Drive (ความละเอียดสูงสุด)
+function extractFullPhotoUrl(raw) {
+  if (!raw) return null;
+  raw = raw.trim();
+  const fid = getFileId(raw);
+  if (fid) return `https://drive.google.com/file/d/${fid}/view`;
+  if (raw.startsWith('http')) return raw;
+  return null;
+}
+
+// แปลง Google Drive URL ให้เป็น link ที่เปิดได้ตรงๆ (ไม่ใช่ thumbnail)
+function extractLinkUrl(raw) {
+  if (!raw) return null;
+  raw = raw.trim();
+  if (!raw.startsWith('http')) return null;
+  // ถ้าเป็น /d/FILE_ID → เปลี่ยนเป็น /file/d/FILE_ID/view
+  let m = raw.match(/\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/view`;
+  // ถ้ามี ?id=FILE_ID
+  m = raw.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (m) return `https://drive.google.com/file/d/${m[1]}/view`;
+  return raw;
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ══════════════════════════════════════════
+//  EVENTS
+// ══════════════════════════════════════════
+document.getElementById('searchInput').addEventListener('keydown', e => { if (e.key === 'Enter') doSearch(); });
+document.getElementById('searchInput').addEventListener('input',   e => { if (!e.target.value) doSearch(); });
+document.getElementById('filterWrap').addEventListener('click', e => {
+  if (!e.target.matches('.chip')) return;
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active');
+  activeGen = e.target.dataset.gen;
+  doSearch();
+});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ══════════════════════════════════════════
+//  FAMILY TREE  (แสดงเฉพาะสายที่ค้นหา)
+// ══════════════════════════════════════════
+let treeBuilt = false;
+let svgScale  = 1;
+let byId      = {};
+
+const NW=148, NH=38, HGAP=16, VGAP=64;
+
+function initTree() {
+  byId = {};
+  allData.forEach((row, idx) => {
+    const id = g(row, 'รหัสประจำตัว').trim();
+    if (id) byId[id] = { row, idx, id, children: [] };
+  });
+  Object.values(byId).forEach(n => {
+    const pid = parentId(n.id);
+    if (pid && byId[pid]) byId[pid].children.push(n);
+  });
+  Object.values(byId).forEach(n =>
+    n.children.sort((a,b) => a.id.localeCompare(b.id, undefined, {numeric:true}))
+  );
+  treeBuilt = true;
+
+  // quick chips — top-level nodes
+  const tops = Object.values(byId)
+    .filter(n => !parentId(n.id) || !byId[parentId(n.id)])
+    .sort((a,b) => a.id.localeCompare(b.id, undefined, {numeric:true}));
+  const chips = document.getElementById('branchChips');
+  if (chips) chips.innerHTML = tops.slice(0,20).map(n =>
+    `<button onclick="setBranch('${n.id}')"
+      style="padding:3px 12px;border-radius:16px;border:1px solid var(--gold-dark);background:transparent;color:var(--brown);font-family:'Sarabun',sans-serif;font-size:12px;cursor:pointer">
+      ${n.id}
+    </button>`
+  ).join('');
+}
+
+function parentId(id) {
+  if (!id) return null;
+  let m;
+  m = id.match(/^(.+)\.(\d+)$/);        if (m) return m[1];
+  m = id.match(/^([A-Za-z]+)(\d+)$/);   if (m) return m[1];
+  m = id.match(/^(\d+)([A-Za-z])$/);    if (m) return m[1];
+  return null;
+}
+
+function setBranch(id) {
+  const inp = document.getElementById('branchInput');
+  if (inp) { inp.value = id; doTreeSearch(); }
+}
+
+function doTreeSearch() {
+  const raw = (document.getElementById('branchInput').value || '').trim().toUpperCase();
+  if (!raw) { document.getElementById('treeInfo').textContent = 'กรุณาพิมพ์รหัสสายครับ'; return; }
+  if (!treeBuilt) { document.getElementById('treeInfo').textContent = 'ข้อมูลยังโหลดไม่เสร็จครับ'; return; }
+  const root = byId[raw];
+  if (!root) {
+    document.getElementById('treeInfo').textContent = 'ไม่พบรหัส "' + raw + '" ในฐานข้อมูลครับ';
+    document.getElementById('treeCanvas').innerHTML =
+      '<div style="text-align:center;padding:40px;color:var(--text-muted)">🔍 ไม่พบรหัส "' + raw + '"</div>';
+    return;
+  }
+  renderBranchTree(root);
+}
+
+function countLeaves(node) {
+  if (!node.children.length) return 1;
+  return node.children.reduce((s,c) => s + countLeaves(c), 0);
+}
+
+function renderBranchTree(root) {
+  const NS = 'http://www.w3.org/2000/svg';
+  const nodes = [];
+  let maxDepth = 0;
+
+  function layout(node, depth, left) {
+    maxDepth = Math.max(maxDepth, depth);
+    const leaves = countLeaves(node);
+    const nodeW  = leaves * (NW + HGAP) - HGAP;
+    const cx = left + nodeW / 2;
+    const cy = 30 + depth * (NH + VGAP);
+    nodes.push({ node, cx, cy, depth });
+    let childLeft = left;
+    node.children.forEach(child => {
+      const cl = countLeaves(child) * (NW + HGAP);
+      layout(child, depth + 1, childLeft);
+      childLeft += cl;
+    });
+    return nodeW;
+  }
+
+  const totalLeaves = countLeaves(root);
+  const svgW = Math.max(totalLeaves * (NW + HGAP) + 40, NW + 80);
+  layout(root, 0, 20);
+  const svgH = 30 + (maxDepth + 1) * (NH + VGAP) + 30;
+
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('width',  svgW * svgScale);
+  svg.setAttribute('height', svgH * svgScale);
+  svg.setAttribute('id', 'treeSvg');
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+
+  // edges
+  const edgeG = document.createElementNS(NS, 'g');
+  const nodeMap = {};
+  nodes.forEach(n => nodeMap[n.node.id] = n);
+  nodes.forEach(({node, cx, cy}) => {
+    node.children.forEach(child => {
+      const c = nodeMap[child.id];
+      if (!c) return;
+      const p = document.createElementNS(NS, 'path');
+      const y1=cy+NH/2, y2=c.cy-NH/2, mid=(y1+y2)/2;
+      p.setAttribute('d', `M${cx},${y1} C${cx},${mid} ${c.cx},${mid} ${c.cx},${y2}`);
+      p.setAttribute('stroke','#c9a84c');
+      p.setAttribute('stroke-width','1.8');
+      p.setAttribute('fill','none');
+      p.setAttribute('opacity','0.55');
+      edgeG.appendChild(p);
+    });
+  });
+  svg.appendChild(edgeG);
+
+  const FILLS = ['#3d2b1f','#5a3825','#8b6914','#c9a84c','#e8d5a3','#fdf6e3','#fff'];
+  const TXTS  = ['#e8d5a3','#e8d5a3','#fdf6e3','#3d2b1f','#3d2b1f','#6b4c3b','#3d2b1f'];
+  const STRKS = ['#c9a84c','#c9a84c','#c9a84c','#8b6914','#c9a84c','#c9a84c','#c9a84c'];
+
+  nodes.forEach(({node, cx, cy, depth}) => {
+    const fi = Math.min(depth, FILLS.length-1);
+    const gEl = document.createElementNS(NS, 'g');
+    gEl.style.cursor = 'pointer';
+
+    const rect = document.createElementNS(NS, 'rect');
+    rect.setAttribute('x', cx-NW/2); rect.setAttribute('y', cy-NH/2);
+    rect.setAttribute('width', NW);  rect.setAttribute('height', NH);
+    rect.setAttribute('rx', 9);
+    rect.setAttribute('fill', FILLS[fi]);
+    rect.setAttribute('stroke', STRKS[fi]);
+    rect.setAttribute('stroke-width', depth===0?'2.5':'1.5');
+    gEl.appendChild(rect);
+
+    const idTxt = document.createElementNS(NS, 'text');
+    idTxt.setAttribute('x', cx-NW/2+6);
+    idTxt.setAttribute('y', cy-NH/2+10);
+    idTxt.setAttribute('fill', TXTS[fi]);
+    idTxt.setAttribute('font-size','9');
+    idTxt.setAttribute('font-family','Sarabun,sans-serif');
+    idTxt.setAttribute('opacity','0.65');
+    idTxt.textContent = node.id;
+    gEl.appendChild(idTxt);
+
+    const name = g(node.row,'ชื่อทายาท') || node.id;
+    const shortName = name.length > 13 ? name.slice(0,12)+'\u2026' : name;
+    const txt = document.createElementNS(NS, 'text');
+    txt.setAttribute('x', cx);
+    txt.setAttribute('y', cy+5);
+    txt.setAttribute('text-anchor','middle');
+    txt.setAttribute('fill', TXTS[fi]);
+    txt.setAttribute('font-size','12');
+    txt.setAttribute('font-weight', depth===0?'700':'400');
+    txt.setAttribute('font-family','Sarabun,sans-serif');
+    txt.textContent = shortName;
+    gEl.appendChild(txt);
+
+    if (node.children.length > 0) {
+      const badge = document.createElementNS(NS,'rect');
+      badge.setAttribute('x', cx+NW/2-22); badge.setAttribute('y', cy-NH/2-1);
+      badge.setAttribute('width',22); badge.setAttribute('height',14);
+      badge.setAttribute('rx',7); badge.setAttribute('fill','#c9a84c');
+      gEl.appendChild(badge);
+      const bt = document.createElementNS(NS,'text');
+      bt.setAttribute('x',cx+NW/2-11); bt.setAttribute('y',cy-NH/2+9);
+      bt.setAttribute('text-anchor','middle');
+      bt.setAttribute('fill','#3d2b1f');
+      bt.setAttribute('font-size','9');
+      bt.setAttribute('font-family','Sarabun,sans-serif');
+      bt.setAttribute('font-weight','700');
+      bt.textContent = node.children.length;
+      gEl.appendChild(bt);
+    }
+
+    gEl.addEventListener('click', () => openModal(node.idx));
+    svg.appendChild(gEl);
+  });
+
+  const totalNodes = nodes.length;
+  document.getElementById('treeInfo').innerHTML =
+    'แสดงสาย <b>' + root.id + '</b> — <b>' + totalNodes + '</b> คน (' + maxDepth + ' ชั้น) &nbsp;·&nbsp; กดที่กล่องเพื่อดูรายละเอียด';
+
+  const canvas = document.getElementById('treeCanvas');
+  canvas.innerHTML = '';
+  canvas.style.overflowX = 'auto';
+  canvas.style.overflowY = 'auto';
+  canvas.style.maxHeight = '72vh';
+  canvas.appendChild(svg);
+  applyZoom();
+}
+
+function treeZoom(f) { svgScale=Math.min(Math.max(svgScale*f,0.25),4); applyZoom(); }
+function treeReset()  { svgScale=1; applyZoom(); }
+function applyZoom() {
+  const sv = document.getElementById('treeSvg');
+  if (!sv) return;
+  const vb = sv.getAttribute('viewBox').split(' ');
+  sv.setAttribute('width',  parseFloat(vb[2]) * svgScale);
+  sv.setAttribute('height', parseFloat(vb[3]) * svgScale);
+  document.getElementById('zoomLabel').textContent = Math.round(svgScale*100)+'%';
+}
+
+function switchTab(tab) {
+  const sv=document.getElementById('searchView');
+  const tv=document.getElementById('treeView');
+  const ts=document.getElementById('tabSearch');
+  const tt=document.getElementById('tabTree');
+  if (tab==='tree') {
+    sv.classList.add('hidden'); tv.classList.add('active');
+    ts.classList.remove('active'); tt.classList.add('active');
+    if (allData.length>0 && !treeBuilt) initTree();
+  } else {
+    tv.classList.remove('active'); sv.classList.remove('hidden');
+    tt.classList.remove('active'); ts.classList.add('active');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const inp = document.getElementById('branchInput');
+  if (inp) inp.addEventListener('keydown', e => { if(e.key==='Enter') doTreeSearch(); });
+});
+
+// ══════════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════════
+fetchData();
+</script>
+</body>
+</html>
